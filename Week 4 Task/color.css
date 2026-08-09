@@ -1,0 +1,15 @@
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: hsl(0, 88%, 44%);
+    text-align: center;
+  }
+  
+  body {
+    background-color: #c1e8fc;
+    font-size: 1.5rem; 
+  }
+  
+  footer{
+      background-color: rgb(82, 204, 204);
+  }
