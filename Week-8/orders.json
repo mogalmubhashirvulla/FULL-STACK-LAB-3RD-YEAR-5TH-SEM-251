@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1001,
+    "username": "bhuavnaa",
+    "items": [
+      {
+        "id": 3,
+        "name": "Chicken Burger",
+        "price": 150,
+        "quantity": 3
+      },
+      {
+        "id": 5,
+        "name": "French Fries",
+        "price": 100,
+        "quantity": 2
+      }
+    ],
+    "total": 690,
+    "status": "Confirmed",
+    "date": "18/9/2026, 11:26:47 pm"
+  }
+]

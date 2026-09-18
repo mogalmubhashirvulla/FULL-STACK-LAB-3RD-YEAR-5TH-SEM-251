@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FoodEase - Login</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+
+        <div class="logo">
+            🍔 FoodEase
+        </div>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+
+            <a href="register.html">
+                Register
+            </a>
+        </div>
+
+    </nav>
+
+
+    <!-- Login Section -->
+
+    <section class="form-section">
+
+        <div class="form-container">
+
+            <div class="form-header">
+
+                <div class="form-icon">
+                    🔐
+                </div>
+
+                <h1>Welcome Back!</h1>
+
+                <p>
+                    Login to continue ordering delicious food.
+                </p>
+
+            </div>
+
+
+            <!-- Login Form -->
+
+            <form id="loginForm">
+
+                <div class="input-group">
+
+                    <label for="username">
+                        Username or Email
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        placeholder="Enter username or email"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                </div>
+
+
+                <button type="submit" class="form-btn">
+                    Login
+                </button>
+
+
+                <div id="message"></div>
+
+            </form>
+
+
+            <p class="form-footer">
+
+                Don't have an account?
+
+                <a href="register.html">
+                    Create Account
+                </a>
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- JavaScript -->
+
+    <script>
+
+        const loginForm = document.getElementById("loginForm");
+
+        loginForm.addEventListener("submit", async function(event) {
+
+            // Prevent page refresh
+            event.preventDefault();
+
+            const username =
+                document.getElementById("username").value;
+
+            const password =
+                document.getElementById("password").value;
+
+            const message =
+                document.getElementById("message");
+
+
+            try {
+
+                // Send login details to backend
+
+                const response = await fetch("/login", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+
+                });
+
+
+                const result = await response.json();
+
+
+                if (result.success) {
+
+                    message.textContent =
+                        result.message;
+
+                    message.className =
+                        "success-message";
+
+
+                    // Store logged-in user
+                    localStorage.setItem(
+                        "foodEaseUser",
+                        JSON.stringify(result.user)
+                    );
+
+
+                    // Open dashboard
+                    setTimeout(() => {
+
+                        window.location.href =
+                            "dashboard.html";
+
+                    }, 800);
+
+                } else {
+
+                    message.textContent =
+                        result.message;
+
+                    message.className =
+                        "error-message";
+
+                }
+
+            } catch (error) {
+
+                message.textContent =
+                    "Unable to connect to the server.";
+
+                message.className =
+                    "error-message";
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FoodEase - Register</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🍔 FoodEase
+        </div>
+
+        <div class="nav-links">
+
+            <a href="index.html">Home</a>
+
+            <a href="login.html" class="login-btn">
+                Login
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Registration Section -->
+
+    <section class="form-section">
+
+        <div class="form-container">
+
+            <div class="form-header">
+
+                <div class="form-icon">
+                    🍔
+                </div>
+
+                <h1>Create Your Account</h1>
+
+                <p>
+                    Join FoodEase and start ordering delicious food.
+                </p>
+
+            </div>
+
+
+            <!-- Registration Form -->
+
+            <form id="registerForm">
+
+                <!-- Name -->
+
+                <div class="input-group">
+
+                    <label for="name">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Enter your full name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Email -->
+
+                <div class="input-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Mobile -->
+
+                <div class="input-group">
+
+                    <label for="mobile">
+                        Mobile Number
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="mobile"
+                        name="mobile"
+                        placeholder="Enter your mobile number"
+                        pattern="[0-9]{10}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Username -->
+
+                <div class="input-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Choose a username"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Password -->
+
+                <div class="input-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Create a password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Address -->
+
+                <div class="input-group">
+
+                    <label for="address">
+                        Delivery Address
+                    </label>
+
+                    <textarea
+                        id="address"
+                        name="address"
+                        placeholder="Enter your delivery address"
+                        rows="3"
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <!-- Submit -->
+
+                <button type="submit" class="form-btn">
+                    Create Account
+                </button>
+
+
+                <!-- Message -->
+
+                <div id="message"></div>
+
+            </form>
+
+
+            <p class="form-footer">
+
+                Already have an account?
+
+                <a href="login.html">
+                    Login here
+                </a>
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- JavaScript -->
+
+    <script>
+
+        const registerForm = document.getElementById("registerForm");
+
+        registerForm.addEventListener("submit", async function(event) {
+
+            // Prevent page refresh
+            event.preventDefault();
+
+            // Get form values
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const mobile = document.getElementById("mobile").value;
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const address = document.getElementById("address").value;
+
+            const message = document.getElementById("message");
+
+
+            try {
+
+                // Send data to Express backend
+
+                const response = await fetch("/register", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        mobile,
+                        username,
+                        password,
+                        address
+                    })
+
+                });
+
+
+                const result = await response.json();
+
+
+                // Display response
+
+                if (result.success) {
+
+                    message.textContent = result.message;
+
+                    message.className = "success-message";
+
+                    // Clear form
+                    registerForm.reset();
+
+                    // Go to login after 1.5 seconds
+                    setTimeout(() => {
+
+                        window.location.href = "login.html";
+
+                    }, 1500);
+
+                } else {
+
+                    message.textContent = result.message;
+
+                    message.className = "error-message";
+
+                }
+
+            } catch (error) {
+
+                message.textContent =
+                    "Unable to connect to the server.";
+
+                message.className = "error-message";
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

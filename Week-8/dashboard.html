@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FoodEase - Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+    <!-- =========================
+         NAVIGATION BAR
+    ========================== -->
+
+    <header class="navbar">
+
+        <div class="logo">
+            🍴 FoodEase
+        </div>
+
+        <nav>
+
+            <a href="dashboard.html" class="active">
+                Menu
+            </a>
+
+            <a href="cart.html">
+                Cart 🛒
+                <span id="cartCount">0</span>
+            </a>
+
+            <a href="orders.html">
+                My Orders
+            </a>
+
+            <button
+                onclick="logout()"
+                class="logout-btn">
+                Logout
+            </button>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =========================
+         DASHBOARD HEADER
+    ========================== -->
+
+    <section class="dashboard-header">
+
+        <h1>
+            Hello, <span id="userName">User</span>! 👋
+        </h1>
+
+        <p>
+            What would you like to eat today?
+        </p>
+
+    </section>
+
+
+
+    <!-- =========================
+         SEARCH BOX
+    ========================== -->
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="foodSearch"
+            placeholder="🔍 Search for food..."
+            onkeyup="searchFood()"
+        >
+
+    </div>
+
+
+
+    <!-- =========================
+         CATEGORY FILTERS
+    ========================== -->
+
+    <div class="category-container">
+
+        <button
+            class="category-btn active"
+            onclick="filterFood('All', this)">
+            All
+        </button>
+
+        <button
+            class="category-btn"
+            onclick="filterFood('Biryani', this)">
+            Biryani
+        </button>
+
+        <button
+            class="category-btn"
+            onclick="filterFood('Pizza', this)">
+            Pizza
+        </button>
+
+        <button
+            class="category-btn"
+            onclick="filterFood('Burgers', this)">
+            Burgers
+        </button>
+
+        <button
+            class="category-btn"
+            onclick="filterFood('Chinese', this)">
+            Chinese
+        </button>
+
+        <button
+            class="category-btn"
+            onclick="filterFood('Snacks', this)">
+            Snacks
+        </button>
+
+        <button
+            class="category-btn"
+            onclick="filterFood('Desserts', this)">
+            Desserts
+        </button>
+
+        <button
+            class="category-btn"
+            onclick="filterFood('Beverages', this)">
+            Beverages
+        </button>
+
+    </div>
+
+
+
+    <!-- =========================
+         FOOD MENU
+    ========================== -->
+
+    <section class="food-section">
+
+        <div
+            id="foodContainer"
+            class="food-grid">
+
+            <p class="loading">
+                Loading delicious food...
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        // =================================
+        // CHECK LOGIN
+        // =================================
+
+        const user =
+            JSON.parse(
+                localStorage.getItem("foodEaseUser")
+            );
+
+
+        if (!user) {
+
+            window.location.href = "login.html";
+
+        }
+
+
+        // =================================
+        // DISPLAY USER NAME
+        // =================================
+
+        document.getElementById("userName").textContent =
+            user.name;
+
+
+
+        // =================================
+        // FOOD DATA
+        // =================================
+
+        let foods = [];
+
+        let selectedCategory = "All";
+
+
+
+        // =================================
+        // LOAD FOOD FROM SERVER
+        // =================================
+
+        async function loadFoods() {
+
+            try {
+
+                const response =
+                    await fetch("/foods");
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Unable to load food menu"
+                    );
+
+                }
+
+
+                foods = await response.json();
+
+
+                displayFoods(foods);
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+
+                document.getElementById(
+                    "foodContainer"
+                ).innerHTML = `
+
+                    <p class="error-message">
+                        Unable to load food menu.
+                        Please try again.
+                    </p>
+
+                `;
+
+            }
+
+        }
+
+
+
+        // =================================
+        // DISPLAY FOOD
+        // =================================
+
+        function displayFoods(foodList) {
+
+            const container =
+                document.getElementById(
+                    "foodContainer"
+                );
+
+
+            if (foodList.length === 0) {
+
+                container.innerHTML = `
+
+                    <div class="no-food">
+
+                        <div class="no-food-icon">
+                            🍽️
+                        </div>
+
+                        <h2>
+                            No food found
+                        </h2>
+
+                        <p>
+                            Try searching for something else.
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            container.innerHTML =
+                foodList.map(food => {
+
+
+                    // Select emoji
+                    let emoji = getFoodEmoji(food);
+
+
+                    return `
+
+                        <div
+                            class="food-card"
+                            data-category="${food.category}">
+
+                            <div class="food-image">
+
+                                ${emoji}
+
+                            </div>
+
+
+                            <div class="food-info">
+
+                                <h3>
+                                    ${food.name}
+                                </h3>
+
+
+                                <p class="food-category">
+                                    ${food.category}
+                                </p>
+
+
+                                <p class="food-description">
+                                    ${food.description || "Delicious and freshly prepared."}
+                                </p>
+
+
+                                <div class="food-bottom">
+
+                                    <span class="food-price">
+                                        ₹${food.price}
+                                    </span>
+
+
+                                    <button
+                                        class="add-btn"
+                                        onclick="addToCart(${food.id})">
+
+                                        + Add
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }).join("");
+
+        }
+
+
+
+        // =================================
+        // FOOD EMOJI
+        // =================================
+
+        function getFoodEmoji(food) {
+
+            const name =
+                food.name.toLowerCase();
+
+            const category =
+                food.category.toLowerCase();
+
+
+            if (name.includes("biryani")) {
+                return "🍛";
+            }
+
+            if (name.includes("pizza")) {
+                return "🍕";
+            }
+
+            if (
+                name.includes("burger") ||
+                category.includes("burger")
+            ) {
+                return "🍔";
+            }
+
+            if (
+                name.includes("noodles") ||
+                name.includes("chinese")
+            ) {
+                return "🍜";
+            }
+
+            if (
+                name.includes("fries") ||
+                name.includes("samosa") ||
+                name.includes("snack")
+            ) {
+                return "🍟";
+            }
+
+            if (
+                name.includes("cake") ||
+                name.includes("ice cream") ||
+                name.includes("gulab") ||
+                category.includes("dessert")
+            ) {
+                return "🍰";
+            }
+
+            if (
+                name.includes("coffee") ||
+                name.includes("juice") ||
+                name.includes("drink") ||
+                name.includes("cola")
+            ) {
+                return "🥤";
+            }
+
+
+            return "🍽️";
+
+        }
+
+
+
+        // =================================
+        // CATEGORY FILTER
+        // =================================
+
+        function filterFood(category, button) {
+
+            selectedCategory = category;
+
+
+            // Remove active class
+            document
+                .querySelectorAll(".category-btn")
+                .forEach(btn => {
+
+                    btn.classList.remove("active");
+
+                });
+
+
+            // Add active class
+            button.classList.add("active");
+
+
+            // Clear search box
+            document.getElementById(
+                "foodSearch"
+            ).value = "";
+
+
+            let filteredFoods;
+
+
+            if (category === "All") {
+
+                filteredFoods = foods;
+
+            }
+
+            else {
+
+                filteredFoods =
+                    foods.filter(food =>
+                        food.category.toLowerCase() ===
+                        category.toLowerCase()
+                    );
+
+            }
+
+
+            displayFoods(filteredFoods);
+
+        }
+
+
+
+        // =================================
+        // SEARCH FOOD
+        // =================================
+
+        function searchFood() {
+
+            const searchText =
+                document.getElementById(
+                    "foodSearch"
+                ).value
+                .toLowerCase()
+                .trim();
+
+
+            let filteredFoods = foods;
+
+
+            // Filter by selected category
+            if (selectedCategory !== "All") {
+
+                filteredFoods =
+                    filteredFoods.filter(food =>
+                        food.category.toLowerCase() ===
+                        selectedCategory.toLowerCase()
+                    );
+
+            }
+
+
+            // Filter by search text
+            if (searchText !== "") {
+
+                filteredFoods =
+                    filteredFoods.filter(food => {
+
+                        const name =
+                            food.name.toLowerCase();
+
+                        const category =
+                            food.category.toLowerCase();
+
+                        const description =
+                            (food.description || "")
+                            .toLowerCase();
+
+
+                        return (
+                            name.includes(searchText) ||
+                            category.includes(searchText) ||
+                            description.includes(searchText)
+                        );
+
+                    });
+
+            }
+
+
+            displayFoods(filteredFoods);
+
+        }
+
+
+
+        // =================================
+        // ADD TO CART
+        // =================================
+
+        function addToCart(foodId) {
+
+            const food =
+                foods.find(
+                    item => item.id === foodId
+                );
+
+
+            if (!food) {
+
+                alert("Food item not found.");
+
+                return;
+
+            }
+
+
+            // Get existing cart
+            let cart =
+                JSON.parse(
+                    localStorage.getItem(
+                        "foodEaseCart"
+                    )
+                ) || [];
+
+
+            // Check if item already exists
+            const existingItem =
+                cart.find(
+                    item => item.id === foodId
+                );
+
+
+            if (existingItem) {
+
+                existingItem.quantity++;
+
+            }
+
+            else {
+
+                cart.push({
+
+                    id: food.id,
+
+                    name: food.name,
+
+                    price: food.price,
+
+                    quantity: 1
+
+                });
+
+            }
+
+
+            // Save cart
+            localStorage.setItem(
+                "foodEaseCart",
+                JSON.stringify(cart)
+            );
+
+
+            // Update cart count
+            updateCartCount();
+
+
+            alert(
+                food.name +
+                " added to cart!"
+            );
+
+        }
+
+
+
+        // =================================
+        // UPDATE CART COUNT
+        // =================================
+
+        function updateCartCount() {
+
+            const cart =
+                JSON.parse(
+                    localStorage.getItem(
+                        "foodEaseCart"
+                    )
+                ) || [];
+
+
+            let count = 0;
+
+
+            cart.forEach(item => {
+
+                count += item.quantity;
+
+            });
+
+
+            document.getElementById(
+                "cartCount"
+            ).textContent = count;
+
+        }
+
+
+
+        // =================================
+        // LOGOUT
+        // =================================
+
+        function logout() {
+
+            localStorage.removeItem(
+                "foodEaseUser"
+            );
+
+
+            localStorage.removeItem(
+                "foodEaseCart"
+            );
+
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+
+        // =================================
+        // INITIALIZE DASHBOARD
+        // =================================
+
+        updateCartCount();
+
+        loadFoods();
+
+    </script>
+
+</body>
+
+</html>

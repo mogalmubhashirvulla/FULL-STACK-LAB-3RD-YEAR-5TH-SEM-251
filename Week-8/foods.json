@@ -1,0 +1,58 @@
+[
+    {
+      "id": 1,
+      "name": "Chicken Biryani",
+      "category": "Biryani",
+      "price": 220,
+      "description": "Aromatic basmati rice with spicy chicken and traditional spices."
+    },
+    {
+      "id": 2,
+      "name": "Veg Biryani",
+      "category": "Biryani",
+      "price": 180,
+      "description": "Flavorful basmati rice with fresh vegetables and spices."
+    },
+    {
+      "id": 3,
+      "name": "Chicken Burger",
+      "category": "Burgers",
+      "price": 150,
+      "description": "Crispy chicken burger with fresh vegetables and special sauce."
+    },
+    {
+      "id": 4,
+      "name": "Margherita Pizza",
+      "category": "Pizza",
+      "price": 250,
+      "description": "Classic pizza with mozzarella, tomato and basil."
+    },
+    {
+      "id": 5,
+      "name": "French Fries",
+      "category": "Snacks",
+      "price": 100,
+      "description": "Crispy golden fries served with a delicious dip."
+    },
+    {
+      "id": 6,
+      "name": "Chicken Noodles",
+      "category": "Chinese",
+      "price": 170,
+      "description": "Stir-fried noodles with chicken and vegetables."
+    },
+    {
+      "id": 7,
+      "name": "Chocolate Cake",
+      "category": "Desserts",
+      "price": 120,
+      "description": "Rich and creamy chocolate cake."
+    },
+    {
+      "id": 8,
+      "name": "Cold Coffee",
+      "category": "Beverages",
+      "price": 90,
+      "description": "Refreshing chilled coffee topped with creamy foam."
+    }
+  ]
